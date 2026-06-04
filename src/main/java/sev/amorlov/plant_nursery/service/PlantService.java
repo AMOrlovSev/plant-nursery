@@ -6,6 +6,7 @@ import sev.amorlov.plant_nursery.model.Plant;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class PlantService {
@@ -18,5 +19,11 @@ public class PlantService {
 
     public List<Plant> getAllPlants() {
         return plants;
+    }
+
+    public Optional<Plant> getPlantById(Long id) {
+        return plants.stream()
+                .filter(plant -> plant.id().equals(id))
+                .findFirst();
     }
 }
