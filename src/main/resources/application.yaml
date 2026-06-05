@@ -1,3 +1,26 @@
 spring:
   application:
     name: plant-nursery
+
+  # Настройки подключения к PostgreSQL
+  datasource:
+    url: jdbc:postgresql://localhost:5432/plants_db
+    username: postgres
+    password: secret_password
+    driver-class-name: org.postgresql.Driver
+
+  # Настройки JPA / Hibernate
+  jpa:
+    # Отключаем автогенерацию таблиц от Hibernate, доверяем её Liquibase
+    hibernate:
+      ddl-auto: none
+    # Показывать SQL запросы в консоли
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+    open-in-view: false
+
+  # Путь к главному файлу миграций Liquibase
+  liquibase:
+    change-log: classpath:db/changelog/db.changelog-master.xml
