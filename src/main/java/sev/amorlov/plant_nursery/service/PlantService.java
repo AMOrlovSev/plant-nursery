@@ -1,29 +1,25 @@
 package sev.amorlov.plant_nursery.service;
 
 import org.springframework.stereotype.Service;
-import sev.amorlov.plant_nursery.model.Plant;
+import sev.amorlov.plant_nursery.model.PlantEntity;
+import sev.amorlov.plant_nursery.repository.PlantRepository;
 
-import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 @Service
 public class PlantService {
-    private final List<Plant> plants = new ArrayList<>();
+    private final PlantRepository plantRepository;
 
-    public PlantService() {
-        plants.add(new Plant(1L, "Голубая Ель", "Хвойные", new BigDecimal("5500.00"), 10));
-        plants.add(new Plant(2L, "Дуб Красный", "Лиственные", new BigDecimal("4200.00"), 5));
+    public PlantService(PlantRepository plantRepository) {
+        this.plantRepository = plantRepository;
     }
 
-    public List<Plant> getAllPlants() {
-        return plants;
+    public List<PlantEntity> getAllPlants() {
+        return plantRepository.findAll();
     }
 
-    public Optional<Plant> getPlantById(Long id) {
-        return plants.stream()
-                .filter(plant -> plant.id().equals(id))
-                .findFirst();
+    public Optional<PlantEntity> getPlantById(Long id) {
+        return plantRepository.findById(id);
     }
 }
