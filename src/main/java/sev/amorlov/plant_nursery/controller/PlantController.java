@@ -24,8 +24,7 @@ public class PlantController {
 
     @GetMapping("/{id}")
     public PlantEntity getPlantById(@PathVariable Long id) {
-        return plantService.getPlantById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Plant not found with id: " + id));
+        return plantService.getPlantById(id);
     }
 
     @PostMapping

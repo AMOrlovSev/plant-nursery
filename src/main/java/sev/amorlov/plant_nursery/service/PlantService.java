@@ -19,8 +19,9 @@ public class PlantService {
         return plantRepository.findAll();
     }
 
-    public Optional<PlantEntity> getPlantById(Long id) {
-        return plantRepository.findById(id);
+    public PlantEntity getPlantById(Long id) {
+        return plantRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Plant not found with id: " + id));
     }
 
     public PlantEntity savePlant(PlantEntity plant) {
