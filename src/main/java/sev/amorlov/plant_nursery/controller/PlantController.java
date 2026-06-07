@@ -39,4 +39,9 @@ public class PlantController {
     public void deletePlant(@PathVariable Long id) {
         plantService.deletePlantById(id);
     }
+
+    @PutMapping("/{id}")
+    public PlantEntity updatePlant(@PathVariable Long id, @RequestBody PlantEntity plant) {
+        return plantService.updatePlant(id, plant);
+    }
 }

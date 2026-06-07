@@ -33,4 +33,17 @@ public class PlantService {
         }
         plantRepository.deleteById(id);
     }
+
+    public PlantEntity updatePlant(Long id, PlantEntity updatedPlant) {
+        return plantRepository.findById(id)
+                .map(existingPlant -> {
+                    existingPlant.setName(updatedPlant.getName());
+                    existingPlant.setType(updatedPlant.getType());
+                    existingPlant.setPrice(updatedPlant.getPrice());
+                    existingPlant.setQuantity(updatedPlant.getQuantity());
+
+                    return plantRepository.save(existingPlant);
+                })
+                .orElseThrow(() -> new IllegalArgumentException("Cannot update. Plant not found with id: " + id));
+    }
 }
