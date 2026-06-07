@@ -22,4 +22,15 @@ public class PlantService {
     public Optional<PlantEntity> getPlantById(Long id) {
         return plantRepository.findById(id);
     }
+
+    public PlantEntity savePlant(PlantEntity plant) {
+        return plantRepository.save(plant);
+    }
+
+    public void deletePlantById(Long id) {
+        if (!plantRepository.existsById(id)) {
+            throw new IllegalArgumentException("Cannot delete. Plant not found with id: " + id);
+        }
+        plantRepository.deleteById(id);
+    }
 }

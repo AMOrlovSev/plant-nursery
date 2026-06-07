@@ -1,9 +1,7 @@
 package sev.amorlov.plant_nursery.controller;
 
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.*;
 import sev.amorlov.plant_nursery.model.PlantEntity;
 import sev.amorlov.plant_nursery.service.PlantService;
 
@@ -28,5 +26,17 @@ public class PlantController {
     public PlantEntity getPlantById(@PathVariable Long id) {
         return plantService.getPlantById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Plant not found with id: " + id));
+    }
+
+    @PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
+    public PlantEntity createPlant(@RequestBody PlantEntity plant) {
+        return plantService.savePlant(plant);
+    }
+
+    @DeleteMapping("/{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void deletePlant(@PathVariable Long id) {
+        plantService.deletePlantById(id);
     }
 }
