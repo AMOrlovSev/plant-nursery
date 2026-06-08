@@ -8,32 +8,33 @@ import sev.amorlov.plant_nursery.model.PlantEntity;
 import sev.amorlov.plant_nursery.repository.PlantRepository;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class PlantService {
     private final PlantRepository plantRepository;
+    private final PlantMapper plantMapper;
 
-    public PlantService(PlantRepository plantRepository) {
+    public PlantService(PlantRepository plantRepository, PlantMapper plantMapper) {
         this.plantRepository = plantRepository;
+        this.plantMapper = plantMapper;
     }
 
     public List<PlantResponseDto> getAllPlants() {
         return plantRepository.findAll().stream()
-                .map(PlantMapper::toResponseDto)
+                .map(plantMapper::toResponseDto)
                 .toList();
     }
 
     public PlantResponseDto getPlantById(Long id) {
         return plantRepository.findById(id)
-                .map(PlantMapper::toResponseDto)
+                .map(plantMapper::toResponseDto)
                 .orElseThrow(() -> new IllegalArgumentException("Plant not found with id: " + id));
     }
 
     public PlantResponseDto savePlant(PlantRequestDto dto) {
-        PlantEntity entity = PlantMapper.toEntity(dto);
+        PlantEntity entity = plantMapper.toEntity(dto);
         PlantEntity savedEntity = plantRepository.save(entity);
-        return PlantMapper.toResponseDto(savedEntity);
+        return plantMapper.toResponseDto(savedEntity);
     }
 
     public PlantResponseDto updatePlant(Long id, PlantRequestDto dto) {
@@ -45,7 +46,7 @@ public class PlantService {
                     existingPlant.setQuantity(dto.quantity());
 
                     PlantEntity updatedEntity = plantRepository.save(existingPlant);
-                    return PlantMapper.toResponseDto(updatedEntity);
+                    return plantMapper.toResponseDto(updatedEntity);
                 })
                 .orElseThrow(() -> new IllegalArgumentException("Cannot update. Plant not found with id: " + id));
     }

@@ -1,25 +1,16 @@
 package sev.amorlov.plant_nursery.dto;
 
+import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
+import org.mapstruct.MappingConstants;
 import sev.amorlov.plant_nursery.model.PlantEntity;
 
-public class PlantMapper {
+// componentModel = MappingConstants.ComponentModel.SPRING делает маппер Spring-компонентом (@Component)
+@Mapper(componentModel = MappingConstants.ComponentModel.SPRING)
+public interface PlantMapper {
 
-    public static PlantResponseDto toResponseDto(PlantEntity entity) {
-        return new PlantResponseDto(
-                entity.getId(),
-                entity.getName(),
-                entity.getType(),
-                entity.getPrice(),
-                entity.getQuantity()
-        );
-    }
+    PlantResponseDto toResponseDto(PlantEntity entity);
 
-    public static PlantEntity toEntity(PlantRequestDto dto) {
-        PlantEntity entity = new PlantEntity();
-        entity.setName(dto.name());
-        entity.setType(dto.type());
-        entity.setPrice(dto.price());
-        entity.setQuantity(dto.quantity());
-        return entity;
-    }
+    @Mapping(target = "id", ignore = true)
+    PlantEntity toEntity(PlantRequestDto dto);
 }
