@@ -2,6 +2,8 @@ package sev.amorlov.plant_nursery.controller;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+import sev.amorlov.plant_nursery.dto.PlantRequestDto;
+import sev.amorlov.plant_nursery.dto.PlantResponseDto;
 import sev.amorlov.plant_nursery.model.PlantEntity;
 import sev.amorlov.plant_nursery.service.PlantService;
 
@@ -18,19 +20,24 @@ public class PlantController {
     }
 
     @GetMapping
-    public List<PlantEntity> getPlants() {
+    public List<PlantResponseDto> getPlants() {
         return plantService.getAllPlants();
     }
 
     @GetMapping("/{id}")
-    public PlantEntity getPlantById(@PathVariable Long id) {
+    public PlantResponseDto getPlantById(@PathVariable Long id) {
         return plantService.getPlantById(id);
     }
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public PlantEntity createPlant(@RequestBody PlantEntity plant) {
+    public PlantResponseDto createPlant(@RequestBody PlantRequestDto plant) {
         return plantService.savePlant(plant);
+    }
+
+    @PutMapping("/{id}")
+    public PlantResponseDto updatePlant(@PathVariable Long id, @RequestBody PlantRequestDto plant) {
+        return plantService.updatePlant(id, plant);
     }
 
     @DeleteMapping("/{id}")
@@ -39,8 +46,4 @@ public class PlantController {
         plantService.deletePlantById(id);
     }
 
-    @PutMapping("/{id}")
-    public PlantEntity updatePlant(@PathVariable Long id, @RequestBody PlantEntity plant) {
-        return plantService.updatePlant(id, plant);
-    }
 }

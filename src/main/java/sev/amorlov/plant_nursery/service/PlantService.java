@@ -1,6 +1,9 @@
 package sev.amorlov.plant_nursery.service;
 
 import org.springframework.stereotype.Service;
+import sev.amorlov.plant_nursery.dto.PlantMapper;
+import sev.amorlov.plant_nursery.dto.PlantRequestDto;
+import sev.amorlov.plant_nursery.dto.PlantResponseDto;
 import sev.amorlov.plant_nursery.model.PlantEntity;
 import sev.amorlov.plant_nursery.repository.PlantRepository;
 
@@ -15,17 +18,36 @@ public class PlantService {
         this.plantRepository = plantRepository;
     }
 
-    public List<PlantEntity> getAllPlants() {
-        return plantRepository.findAll();
+    public List<PlantResponseDto> getAllPlants() {
+        return plantRepository.findAll().stream()
+                .map(PlantMapper::toResponseDto)
+                .toList();
     }
 
-    public PlantEntity getPlantById(Long id) {
+    public PlantResponseDto getPlantById(Long id) {
         return plantRepository.findById(id)
+                .map(PlantMapper::toResponseDto)
                 .orElseThrow(() -> new IllegalArgumentException("Plant not found with id: " + id));
     }
 
-    public PlantEntity savePlant(PlantEntity plant) {
-        return plantRepository.save(plant);
+    public PlantResponseDto savePlant(PlantRequestDto dto) {
+        PlantEntity entity = PlantMapper.toEntity(dto);
+        PlantEntity savedEntity = plantRepository.save(entity);
+        return PlantMapper.toResponseDto(savedEntity);
+    }
+
+    public PlantResponseDto updatePlant(Long id, PlantRequestDto dto) {
+        return plantRepository.findById(id)
+                .map(existingPlant -> {
+                    existingPlant.setName(dto.name());
+                    existingPlant.setType(dto.type());
+                    existingPlant.setPrice(dto.price());
+                    existingPlant.setQuantity(dto.quantity());
+
+                    PlantEntity updatedEntity = plantRepository.save(existingPlant);
+                    return PlantMapper.toResponseDto(updatedEntity);
+                })
+                .orElseThrow(() -> new IllegalArgumentException("Cannot update. Plant not found with id: " + id));
     }
 
     public void deletePlantById(Long id) {
@@ -35,16 +57,4 @@ public class PlantService {
         plantRepository.deleteById(id);
     }
 
-    public PlantEntity updatePlant(Long id, PlantEntity updatedPlant) {
-        return plantRepository.findById(id)
-                .map(existingPlant -> {
-                    existingPlant.setName(updatedPlant.getName());
-                    existingPlant.setType(updatedPlant.getType());
-                    existingPlant.setPrice(updatedPlant.getPrice());
-                    existingPlant.setQuantity(updatedPlant.getQuantity());
-
-                    return plantRepository.save(existingPlant);
-                })
-                .orElseThrow(() -> new IllegalArgumentException("Cannot update. Plant not found with id: " + id));
-    }
 }
