@@ -1,5 +1,6 @@
 package sev.amorlov.plant_nursery.controller;
 
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import sev.amorlov.plant_nursery.dto.PlantRequestDto;
@@ -31,12 +32,12 @@ public class PlantController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public PlantResponseDto createPlant(@RequestBody PlantRequestDto plant) {
+    public PlantResponseDto createPlant(@Valid @RequestBody PlantRequestDto plant) {
         return plantService.savePlant(plant);
     }
 
     @PutMapping("/{id}")
-    public PlantResponseDto updatePlant(@PathVariable Long id, @RequestBody PlantRequestDto plant) {
+    public PlantResponseDto updatePlant(@PathVariable Long id, @Valid @RequestBody PlantRequestDto plant) {
         return plantService.updatePlant(id, plant);
     }
 
