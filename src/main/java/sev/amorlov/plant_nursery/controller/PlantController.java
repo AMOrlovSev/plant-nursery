@@ -1,6 +1,7 @@
 package sev.amorlov.plant_nursery.controller;
 
 import jakarta.validation.Valid;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import sev.amorlov.plant_nursery.dto.PlantRequestDto;
@@ -21,8 +22,13 @@ public class PlantController {
     }
 
     @GetMapping
-    public List<PlantResponseDto> getPlants() {
-        return plantService.getAllPlants();
+    public Page<PlantResponseDto> getPlants(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "id") String sortBy,
+            @RequestParam(defaultValue = "asc") String direction
+    ) {
+        return plantService.getAllPlants(page, size, sortBy, direction);
     }
 
     @GetMapping("/{id}")

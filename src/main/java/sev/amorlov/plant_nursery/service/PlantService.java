@@ -1,5 +1,9 @@
 package sev.amorlov.plant_nursery.service;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import sev.amorlov.plant_nursery.dto.PlantMapper;
 import sev.amorlov.plant_nursery.dto.PlantRequestDto;
@@ -19,10 +23,16 @@ public class PlantService {
         this.plantMapper = plantMapper;
     }
 
-    public List<PlantResponseDto> getAllPlants() {
-        return plantRepository.findAll().stream()
-                .map(plantMapper::toResponseDto)
-                .toList();
+    public Page<PlantResponseDto> getAllPlants(int page, int size, String sortBy, String direction) {
+
+        Sort sort = direction.equalsIgnoreCase(Sort.Direction.DESC.name())
+                ? Sort.by(sortBy).descending()
+                : Sort.by(sortBy).ascending();
+
+        Pageable pageable = PageRequest.of(page, size, sort);
+
+        return plantRepository.findAll(pageable)
+                .map(plantMapper::toResponseDto);
     }
 
     public PlantResponseDto getPlantById(Long id) {
