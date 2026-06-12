@@ -5,9 +5,11 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import sev.amorlov.plant_nursery.dto.PlantMapper;
 import sev.amorlov.plant_nursery.dto.PlantRequestDto;
 import sev.amorlov.plant_nursery.dto.PlantResponseDto;
+import sev.amorlov.plant_nursery.exception.InsufficientStockException;
 import sev.amorlov.plant_nursery.model.PlantEntity;
 import sev.amorlov.plant_nursery.repository.PlantRepository;
 
@@ -66,6 +68,24 @@ public class PlantService {
             throw new IllegalArgumentException("Cannot delete. Plant not found with id: " + id);
         }
         plantRepository.deleteById(id);
+    }
+
+    @Transactional
+    public PlantResponseDto sellPlant(Long id, Integer quantityToSell) {
+        PlantEntity plant = plantRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Plant not found with id: " + id));
+
+        if (plant.getQuantity() < quantityToSell) {
+            throw new InsufficientStockException(
+                    String.format("Недостаточно товара на складе. Запрошено: %d, в наличии: %d",
+                            quantityToSell, plant.getQuantity())
+            );
+        }
+
+        plant.setQuantity(plant.getQuantity() - quantityToSell);
+
+        PlantEntity updatedPlant = plantRepository.save(plant);
+        return plantMapper.toResponseDto(updatedPlant);
     }
 
 }

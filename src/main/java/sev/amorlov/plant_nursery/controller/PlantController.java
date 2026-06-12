@@ -53,4 +53,15 @@ public class PlantController {
         plantService.deletePlantById(id);
     }
 
+    @PostMapping("/{id}/sell")
+    public PlantResponseDto sellPlant(
+            @PathVariable Long id,
+            @RequestParam Integer quantity
+    ) {
+        if (quantity <= 0) {
+            throw new IllegalArgumentException("Количество продаваемого товара должно быть больше нуля");
+        }
+        return plantService.sellPlant(id, quantity);
+    }
+
 }
