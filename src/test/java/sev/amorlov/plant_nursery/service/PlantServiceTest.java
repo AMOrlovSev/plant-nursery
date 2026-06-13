@@ -10,6 +10,7 @@ import org.springframework.data.domain.*;
 import sev.amorlov.plant_nursery.dto.PlantMapper;
 import sev.amorlov.plant_nursery.dto.PlantRequestDto;
 import sev.amorlov.plant_nursery.dto.PlantResponseDto;
+import sev.amorlov.plant_nursery.exception.InsufficientStockException;
 import sev.amorlov.plant_nursery.model.PlantEntity;
 import sev.amorlov.plant_nursery.repository.PlantRepository;
 
@@ -98,5 +99,40 @@ class PlantServiceTest {
         assertNotNull(resultPage);
         assertEquals(1, resultPage.getTotalElements());
         assertEquals("Фикус", resultPage.getContent().get(0).name());
+    }
+
+    @Test
+    void sellPlant_ShouldDecreaseQuantity_WhenStockIsSufficient() {
+        // Arrange
+        when(plantRepository.findById(1L)).thenReturn(Optional.of(plantEntity));
+
+        PlantResponseDto updatedResponseDto = new PlantResponseDto(1L, "Фикус", "Комнатные", BigDecimal.valueOf(1500), 3);
+        when(plantRepository.save(any(PlantEntity.class))).thenReturn(plantEntity);
+        when(plantMapper.toResponseDto(any(PlantEntity.class))).thenReturn(updatedResponseDto);
+
+        // Act
+        PlantResponseDto result = plantService.sellPlant(1L, 2);
+
+        // Assert
+        assertNotNull(result);
+        assertEquals(3, result.quantity());
+
+        assertEquals(3, plantEntity.getQuantity());
+        verify(plantRepository, times(1)).save(plantEntity);
+    }
+
+    @Test
+    void sellPlant_ShouldThrowInsufficientStockException_WhenStockIsNotSufficient() {
+        // Arrange
+        when(plantRepository.findById(1L)).thenReturn(Optional.of(plantEntity));
+
+        // Act & Assert
+        InsufficientStockException exception = assertThrows(InsufficientStockException.class, () -> {
+            plantService.sellPlant(1L, 10);
+        });
+
+        assertTrue(exception.getMessage().contains("Недостаточно товара на складе"));
+
+        verify(plantRepository, never()).save(any());
     }
 }
