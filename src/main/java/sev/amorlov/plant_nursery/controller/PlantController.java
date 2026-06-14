@@ -23,12 +23,16 @@ public class PlantController {
 
     @GetMapping
     public Page<PlantResponseDto> getPlants(
+            @RequestParam(required = false) String type,
+            @RequestParam(required = false) java.math.BigDecimal minPrice,
+            @RequestParam(required = false) java.math.BigDecimal maxPrice,
+            @RequestParam(required = false) Boolean onlyAvailable,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
             @RequestParam(defaultValue = "id") String sortBy,
             @RequestParam(defaultValue = "asc") String direction
     ) {
-        return plantService.getAllPlants(page, size, sortBy, direction);
+        return plantService.getAllPlants(type, minPrice, maxPrice, onlyAvailable, page, size, sortBy, direction);
     }
 
     @GetMapping("/{id}")
