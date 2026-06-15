@@ -7,6 +7,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.*;
+import org.springframework.data.jpa.domain.Specification;
 import sev.amorlov.plant_nursery.dto.PlantMapper;
 import sev.amorlov.plant_nursery.dto.PlantRequestDto;
 import sev.amorlov.plant_nursery.dto.PlantResponseDto;
@@ -84,21 +85,30 @@ class PlantServiceTest {
     }
 
     @Test
-    void getAllPlants_ShouldReturnPageOfPlants() {
+    void getAllPlants_ShouldReturnFilteredPageOfPlants_WhenFiltersAreApplied() {
         // Arrange
+        String type = "Комнатные";
+        BigDecimal minPrice = BigDecimal.valueOf(1000);
+        BigDecimal maxPrice = BigDecimal.valueOf(2000);
+        Boolean onlyAvailable = true;
+
         Pageable pageable = PageRequest.of(0, 10, Sort.by("id").ascending());
         Page<PlantEntity> entityPage = new PageImpl<>(List.of(plantEntity));
 
-        when(plantRepository.findAll(pageable)).thenReturn(entityPage);
+        when(plantRepository.findAll(any(Specification.class), eq(pageable))).thenReturn(entityPage);
         when(plantMapper.toResponseDto(plantEntity)).thenReturn(plantResponseDto);
 
         // Act
-        Page<PlantResponseDto> resultPage = plantService.getAllPlants(0, 10, "id", "asc");
+        Page<PlantResponseDto> resultPage = plantService.getAllPlants(
+                type, minPrice, maxPrice, onlyAvailable, 0, 10, "id", "asc"
+        );
 
         // Assert
         assertNotNull(resultPage);
         assertEquals(1, resultPage.getTotalElements());
         assertEquals("Фикус", resultPage.getContent().get(0).name());
+
+        verify(plantRepository, times(1)).findAll(any(Specification.class), eq(pageable));
     }
 
     @Test
