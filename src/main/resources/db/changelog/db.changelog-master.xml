@@ -8,5 +8,6 @@
     <include file="db/changelog/changeset/001-create-plants-table.sql" relativeToChangelogFile="false"/>
     <include file="db/changelog/changeset/002-insert-initial-plants.sql" relativeToChangelogFile="false"/>
     <include file="db/changelog/changeset/003-create-suppliers-table.sql" relativeToChangelogFile="false"/>
+    <include file="db/changelog/changeset/004-insert-test-suppliers.sql" relativeToChangelogFile="false"/>
 
 </databaseChangeLog>
