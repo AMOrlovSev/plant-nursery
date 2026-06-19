@@ -20,5 +20,7 @@ public record PlantRequestDto(
 
         @NotNull(message = "Количество должно быть указано")
         @PositiveOrZero(message = "Количество не может быть отрицательным")
-        Integer quantity
+        Integer quantity,
+
+        Long supplierId
 ) {}

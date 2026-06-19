@@ -5,12 +5,12 @@ import org.mapstruct.Mapping;
 import org.mapstruct.MappingConstants;
 import sev.amorlov.plant_nursery.model.PlantEntity;
 
-// componentModel = MappingConstants.ComponentModel.SPRING делает маппер Spring-компонентом (@Component)
 @Mapper(componentModel = MappingConstants.ComponentModel.SPRING)
 public interface PlantMapper {
 
+    @Mapping(source = "supplier.id", target = "supplierId")
     PlantResponseDto toResponseDto(PlantEntity entity);
 
-    @Mapping(target = "id", ignore = true)
+    @Mapping(target = "supplier", ignore = true)
     PlantEntity toEntity(PlantRequestDto dto);
 }

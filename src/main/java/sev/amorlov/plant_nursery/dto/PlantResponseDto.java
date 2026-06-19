@@ -7,5 +7,6 @@ public record PlantResponseDto(
         String name,
         String type,
         BigDecimal price,
-        Integer quantity
+        Integer quantity,
+        Long supplierId
 ) {}

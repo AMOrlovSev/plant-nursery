@@ -12,7 +12,9 @@ import sev.amorlov.plant_nursery.dto.PlantRequestDto;
 import sev.amorlov.plant_nursery.dto.PlantResponseDto;
 import sev.amorlov.plant_nursery.exception.InsufficientStockException;
 import sev.amorlov.plant_nursery.model.PlantEntity;
+import sev.amorlov.plant_nursery.model.SupplierEntity;
 import sev.amorlov.plant_nursery.repository.PlantRepository;
+import sev.amorlov.plant_nursery.repository.SupplierRepository;
 import sev.amorlov.plant_nursery.repository.specification.PlantSpecifications;
 
 import java.math.BigDecimal;
@@ -22,10 +24,12 @@ import java.util.List;
 public class PlantService {
     private final PlantRepository plantRepository;
     private final PlantMapper plantMapper;
+    private final SupplierRepository supplierRepository;
 
-    public PlantService(PlantRepository plantRepository, PlantMapper plantMapper) {
+    public PlantService(PlantRepository plantRepository, PlantMapper plantMapper, SupplierRepository supplierRepository) {
         this.plantRepository = plantRepository;
         this.plantMapper = plantMapper;
+        this.supplierRepository = supplierRepository;
     }
 
     public Page<PlantResponseDto> getAllPlants(
@@ -57,6 +61,13 @@ public class PlantService {
 
     public PlantResponseDto savePlant(PlantRequestDto dto) {
         PlantEntity entity = plantMapper.toEntity(dto);
+
+        if (dto.supplierId() != null) {
+            SupplierEntity supplier = supplierRepository.findById(dto.supplierId())
+                    .orElseThrow(() -> new IllegalArgumentException("Supplier not found with id: " + dto.supplierId()));
+            entity.setSupplier(supplier);
+        }
+
         PlantEntity savedEntity = plantRepository.save(entity);
         return plantMapper.toResponseDto(savedEntity);
     }
