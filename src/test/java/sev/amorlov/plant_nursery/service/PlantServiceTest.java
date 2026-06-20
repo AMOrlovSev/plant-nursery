@@ -13,7 +13,9 @@ import sev.amorlov.plant_nursery.dto.PlantRequestDto;
 import sev.amorlov.plant_nursery.dto.PlantResponseDto;
 import sev.amorlov.plant_nursery.exception.InsufficientStockException;
 import sev.amorlov.plant_nursery.model.PlantEntity;
+import sev.amorlov.plant_nursery.model.SupplierEntity;
 import sev.amorlov.plant_nursery.repository.PlantRepository;
+import sev.amorlov.plant_nursery.repository.SupplierRepository;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -31,22 +33,33 @@ class PlantServiceTest {
     @Mock
     private PlantMapper plantMapper;
 
+    @Mock
+    private SupplierRepository supplierRepository;
+
     @InjectMocks
     private PlantService plantService;
 
     private PlantEntity plantEntity;
+    private SupplierEntity supplierEntity;
+    private PlantRequestDto plantRequestDto;
     private PlantResponseDto plantResponseDto;
 
     @BeforeEach
     void setUp() {
+        supplierEntity = new SupplierEntity();
+        supplierEntity.setId(1L);
+        supplierEntity.setName("ЭкоСад Питомник");
+
         plantEntity = new PlantEntity();
         plantEntity.setId(1L);
         plantEntity.setName("Фикус");
         plantEntity.setType("Комнатные");
         plantEntity.setPrice(BigDecimal.valueOf(1500));
         plantEntity.setQuantity(5);
+        plantEntity.setSupplier(supplierEntity);
 
-        plantResponseDto = new PlantResponseDto(1L, "Фикус", "Комнатные", BigDecimal.valueOf(1500), 5);
+        plantRequestDto = new PlantRequestDto("Фикус", "Комнатные", BigDecimal.valueOf(1500), 5, 1L);
+        plantResponseDto = new PlantResponseDto(1L, "Фикус", "Комнатные", BigDecimal.valueOf(1500), 5, 1L);
     }
 
     @Test
@@ -116,7 +129,7 @@ class PlantServiceTest {
         // Arrange
         when(plantRepository.findById(1L)).thenReturn(Optional.of(plantEntity));
 
-        PlantResponseDto updatedResponseDto = new PlantResponseDto(1L, "Фикус", "Комнатные", BigDecimal.valueOf(1500), 3);
+        PlantResponseDto updatedResponseDto = new PlantResponseDto(1L, "Фикус", "Комнатные", BigDecimal.valueOf(1500), 3, 1L);
         when(plantRepository.save(any(PlantEntity.class))).thenReturn(plantEntity);
         when(plantMapper.toResponseDto(any(PlantEntity.class))).thenReturn(updatedResponseDto);
 
@@ -143,6 +156,39 @@ class PlantServiceTest {
 
         assertTrue(exception.getMessage().contains("Недостаточно товара на складе"));
 
+        verify(plantRepository, never()).save(any());
+    }
+
+    @Test
+    void savePlant_ShouldSavePlantWithSupplier_WhenSupplierExists() {
+        // Arrange
+        when(plantMapper.toEntity(plantRequestDto)).thenReturn(plantEntity);
+        when(supplierRepository.findById(1L)).thenReturn(Optional.of(supplierEntity));
+        when(plantRepository.save(plantEntity)).thenReturn(plantEntity);
+        when(plantMapper.toResponseDto(plantEntity)).thenReturn(plantResponseDto);
+
+        // Act
+        PlantResponseDto result = plantService.savePlant(plantRequestDto);
+
+        // Assert
+        assertNotNull(result);
+        assertEquals(1L, result.supplierId());
+        verify(supplierRepository, times(1)).findById(1L);
+        verify(plantRepository, times(1)).save(plantEntity);
+    }
+
+    @Test
+    void savePlant_ShouldThrowException_WhenSupplierDoesNotExist() {
+        // Arrange
+        when(plantMapper.toEntity(plantRequestDto)).thenReturn(plantEntity);
+        when(supplierRepository.findById(1L)).thenReturn(Optional.empty());
+
+        // Act & Assert
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
+            plantService.savePlant(plantRequestDto);
+        });
+
+        assertTrue(exception.getMessage().contains("Supplier not found with id: 1"));
         verify(plantRepository, never()).save(any());
     }
 }
