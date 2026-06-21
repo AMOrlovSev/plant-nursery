@@ -9,6 +9,7 @@ import sev.amorlov.plant_nursery.model.PlantEntity;
 public interface PlantMapper {
 
     @Mapping(source = "supplier.id", target = "supplierId")
+    @Mapping(source = "supplier.name", target = "supplierName")
     PlantResponseDto toResponseDto(PlantEntity entity);
 
     @Mapping(target = "supplier", ignore = true)
