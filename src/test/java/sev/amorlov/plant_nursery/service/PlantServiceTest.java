@@ -59,7 +59,7 @@ class PlantServiceTest {
         plantEntity.setSupplier(supplierEntity);
 
         plantRequestDto = new PlantRequestDto("Фикус", "Комнатные", BigDecimal.valueOf(1500), 5, 1L);
-        plantResponseDto = new PlantResponseDto(1L, "Фикус", "Комнатные", BigDecimal.valueOf(1500), 5, 1L);
+        plantResponseDto = new PlantResponseDto(1L, "Фикус", "Комнатные", BigDecimal.valueOf(1500), 5, 1L, "ЭкоСад Питомник");
     }
 
     @Test
@@ -129,7 +129,7 @@ class PlantServiceTest {
         // Arrange
         when(plantRepository.findById(1L)).thenReturn(Optional.of(plantEntity));
 
-        PlantResponseDto updatedResponseDto = new PlantResponseDto(1L, "Фикус", "Комнатные", BigDecimal.valueOf(1500), 3, 1L);
+        PlantResponseDto updatedResponseDto = new PlantResponseDto(1L, "Фикус", "Комнатные", BigDecimal.valueOf(1500), 3, 1L, "ЭкоСад Питомник");
         when(plantRepository.save(any(PlantEntity.class))).thenReturn(plantEntity);
         when(plantMapper.toResponseDto(any(PlantEntity.class))).thenReturn(updatedResponseDto);
 
