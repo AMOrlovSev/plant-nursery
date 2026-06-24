@@ -1,0 +1,58 @@
+2026-06-24 23:25:29.902 [background-preinit] INFO  o.h.validator.internal.util.Version - HV000001: Hibernate Validator 8.0.3.Final
+2026-06-24 23:25:29.980 [main] INFO  s.a.p.PlantNurseryApplication - Starting PlantNurseryApplication using Java 23.0.2 with PID 11620 (C:\Users\AMOrlov\Desktop\Java\plant-nursery\target\classes started by AMOrlov in C:\Users\AMOrlov\Desktop\Java\plant-nursery)
+2026-06-24 23:25:29.981 [main] INFO  s.a.p.PlantNurseryApplication - No active profile set, falling back to 1 default profile: "default"
+2026-06-24 23:25:31.236 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2026-06-24 23:25:31.339 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 85 ms. Found 2 JPA repository interfaces.
+2026-06-24 23:25:32.045 [main] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat initialized with port 8080 (http)
+2026-06-24 23:25:32.064 [main] INFO  o.a.coyote.http11.Http11NioProtocol - Initializing ProtocolHandler ["http-nio-8080"]
+2026-06-24 23:25:32.068 [main] INFO  o.a.catalina.core.StandardService - Starting service [Tomcat]
+2026-06-24 23:25:32.068 [main] INFO  o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/10.1.54]
+2026-06-24 23:25:32.142 [main] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
+2026-06-24 23:25:32.143 [main] INFO  o.s.b.w.s.c.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 2082 ms
+2026-06-24 23:25:32.393 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting...
+2026-06-24 23:25:32.801 [main] INFO  com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Added connection org.postgresql.jdbc.PgConnection@18dcb8a7
+2026-06-24 23:25:32.802 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Start completed.
+2026-06-24 23:25:33.056 [main] INFO  liquibase.database - Set default schema name to public
+2026-06-24 23:25:33.611 [main] INFO  liquibase.changelog - Reading from public.databasechangelog
+2026-06-24 23:25:33.745 [main] INFO  liquibase.lockservice - Successfully acquired change log lock
+2026-06-24 23:25:33.747 [main] INFO  liquibase.command - Using deploymentId: 2332732349
+2026-06-24 23:25:33.750 [main] INFO  liquibase.changelog - Reading from public.databasechangelog
+2026-06-24 23:25:33.785 [main] INFO  liquibase.ui - Running Changeset: db/changelog/changeset/003-create-suppliers-table.sql::3::artemorlov
+2026-06-24 23:25:33.855 [main] INFO  liquibase.changelog - Custom SQL executed
+2026-06-24 23:25:33.862 [main] INFO  liquibase.changelog - ChangeSet db/changelog/changeset/003-create-suppliers-table.sql::3::artemorlov ran successfully in 75ms
+2026-06-24 23:25:33.877 [main] INFO  liquibase.ui - Running Changeset: db/changelog/changeset/004-insert-test-suppliers.sql::4::artemorlov
+2026-06-24 23:25:33.886 [main] INFO  liquibase.changelog - Custom SQL executed
+2026-06-24 23:25:33.889 [main] INFO  liquibase.changelog - ChangeSet db/changelog/changeset/004-insert-test-suppliers.sql::4::artemorlov ran successfully in 10ms
+2026-06-24 23:25:33.902 [main] INFO  liquibase.util - UPDATE SUMMARY
+2026-06-24 23:25:33.902 [main] INFO  liquibase.util - Run:                          2
+2026-06-24 23:25:33.902 [main] INFO  liquibase.util - Previously run:               2
+2026-06-24 23:25:33.902 [main] INFO  liquibase.util - Filtered out:                 0
+2026-06-24 23:25:33.903 [main] INFO  liquibase.util - -------------------------------
+2026-06-24 23:25:33.903 [main] INFO  liquibase.util - Total change sets:            4
+2026-06-24 23:25:33.905 [main] INFO  liquibase.util - Update summary generated
+2026-06-24 23:25:33.909 [main] INFO  liquibase.command - Update command completed successfully.
+2026-06-24 23:25:33.910 [main] INFO  liquibase.ui - Liquibase: Update has been successful. Rows affected: 7
+2026-06-24 23:25:33.916 [main] INFO  liquibase.lockservice - Successfully released change log lock
+2026-06-24 23:25:33.919 [main] INFO  liquibase.command - Command execution complete
+2026-06-24 23:25:34.919 [main] INFO  o.h.jpa.internal.util.LogHelper - HHH000204: Processing PersistenceUnitInfo [name: default]
+2026-06-24 23:25:35.021 [main] INFO  org.hibernate.Version - HHH000412: Hibernate ORM core version 6.6.49.Final
+2026-06-24 23:25:35.081 [main] INFO  o.h.c.i.RegionFactoryInitiator - HHH000026: Second-level cache disabled
+2026-06-24 23:25:35.558 [main] INFO  o.s.o.j.p.SpringPersistenceUnitInfo - No LoadTimeWeaver setup: ignoring JPA class transformer
+2026-06-24 23:25:35.681 [main] INFO  o.hibernate.orm.connections.pooling - HHH10001005: Database info:
+	Database JDBC URL [Connecting through datasource 'HikariDataSource (HikariPool-1)']
+	Database driver: undefined/unknown
+	Database version: 15.18
+	Autocommit mode: undefined/unknown
+	Isolation level: undefined/unknown
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2026-06-24 23:25:36.802 [main] INFO  o.h.e.t.j.p.i.JtaPlatformInitiator - HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2026-06-24 23:25:36.805 [main] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Initialized JPA EntityManagerFactory for persistence unit 'default'
+2026-06-24 23:25:37.799 [main] INFO  o.a.coyote.http11.Http11NioProtocol - Starting ProtocolHandler ["http-nio-8080"]
+2026-06-24 23:25:37.829 [main] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat started on port 8080 (http) with context path '/'
+2026-06-24 23:25:37.840 [main] INFO  s.a.p.PlantNurseryApplication - Started PlantNurseryApplication in 8.908 seconds (process running for 10.347)
+2026-06-24 23:26:48.702 [http-nio-8080-exec-1] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring DispatcherServlet 'dispatcherServlet'
+2026-06-24 23:26:48.702 [http-nio-8080-exec-1] INFO  o.s.web.servlet.DispatcherServlet - Initializing Servlet 'dispatcherServlet'
+2026-06-24 23:26:48.703 [http-nio-8080-exec-1] INFO  o.s.web.servlet.DispatcherServlet - Completed initialization in 1 ms
+2026-06-24 23:27:31.425 [http-nio-8080-exec-7] INFO  s.a.p.service.PlantService - Request to update plant with id: 8
+2026-06-24 23:27:31.483 [http-nio-8080-exec-7] WARN  s.a.p.service.PlantService - Cannot update. Plant not found with id: 8
