@@ -13,5 +13,12 @@ services:
     volumes:
       - pgdata:/var/lib/postgresql/data
 
+  redis:
+    image: redis:7.2-alpine
+    container_name: plant_nursery_redis
+    ports:
+      - "6379:6379"
+    restart: always
+
 volumes:
   pgdata:

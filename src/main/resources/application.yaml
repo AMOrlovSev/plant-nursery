@@ -24,3 +24,9 @@ spring:
   # Путь к главному файлу миграций Liquibase
   liquibase:
     change-log: classpath:db/changelog/db.changelog-master.xml
+
+  # Redis
+  data:
+    redis:
+      host: localhost
+      port: 6379

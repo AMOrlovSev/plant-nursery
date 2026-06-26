@@ -1,6 +1,8 @@
 package sev.amorlov.plant_nursery.service;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -35,10 +37,13 @@ public class PlantService {
         this.supplierRepository = supplierRepository;
     }
 
+    @Cacheable(value = "plants", key = "{#type, #minPrice, #maxPrice, #onlyAvailable, #page, #size, #sortBy, #direction}")
     public Page<PlantResponseDto> getAllPlants(
             String type, BigDecimal minPrice, BigDecimal maxPrice, Boolean onlyAvailable,
             int page, int size, String sortBy, String direction
     ) {
+        log.info("Fetching plants from Database with filters...");
+
         Sort sort = direction.equalsIgnoreCase(Sort.Direction.DESC.name())
                 ? Sort.by(sortBy).descending()
                 : Sort.by(sortBy).ascending();
@@ -65,6 +70,8 @@ public class PlantService {
                 });
     }
 
+    @Transactional
+    @CacheEvict(value = "plants", allEntries = true)
     public PlantResponseDto savePlant(PlantRequestDto dto) {
         log.info("Request to save a new plant: '{}', type: '{}'", dto.name(), dto.type());
         PlantEntity entity = plantMapper.toEntity(dto);
@@ -83,6 +90,8 @@ public class PlantService {
         return plantMapper.toResponseDto(savedEntity);
     }
 
+    @Transactional
+    @CacheEvict(value = "plants", allEntries = true)
     public PlantResponseDto updatePlant(Long id, PlantRequestDto dto) {
         log.info("Request to update plant with id: {}", id);
         return plantRepository.findById(id)
@@ -103,6 +112,7 @@ public class PlantService {
     }
 
     @Transactional
+    @CacheEvict(value = "plants", allEntries = true)
     public void deletePlantById(Long id) {
         log.info("Request to delete plant with id: {}", id);
         if (!plantRepository.existsById(id)) {
@@ -114,6 +124,7 @@ public class PlantService {
     }
 
     @Transactional
+    @CacheEvict(value = "plants", allEntries = true)
     public PlantResponseDto sellPlant(Long id, Integer quantityToSell) {
         log.info("Request to sell {} pcs of plant with id: {}", quantityToSell, id);
         PlantEntity plant = plantRepository.findById(id)
