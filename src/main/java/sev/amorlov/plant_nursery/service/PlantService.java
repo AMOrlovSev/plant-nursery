@@ -3,13 +3,11 @@ package sev.amorlov.plant_nursery.service;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.*;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import sev.amorlov.plant_nursery.dto.CachedPage;
 import sev.amorlov.plant_nursery.dto.PlantMapper;
 import sev.amorlov.plant_nursery.dto.PlantRequestDto;
 import sev.amorlov.plant_nursery.dto.PlantResponseDto;
@@ -38,7 +36,7 @@ public class PlantService {
     }
 
     @Cacheable(value = "plants", key = "{#type, #minPrice, #maxPrice, #onlyAvailable, #page, #size, #sortBy, #direction}")
-    public Page<PlantResponseDto> getAllPlants(
+    public CachedPage<PlantResponseDto> getAllPlants(
             String type, BigDecimal minPrice, BigDecimal maxPrice, Boolean onlyAvailable,
             int page, int size, String sortBy, String direction
     ) {
@@ -57,8 +55,16 @@ public class PlantService {
                 PlantSpecifications.isAvailable(onlyAvailable)
         );
 
-        return plantRepository.findAll(spec, pageable)
+        Page<PlantResponseDto> databasePage = plantRepository.findAll(spec, pageable)
                 .map(plantMapper::toResponseDto);
+
+        return new CachedPage<>(
+                databasePage.getContent(),
+                databasePage.getNumber(),
+                databasePage.getSize(),
+                databasePage.getTotalElements(),
+                databasePage.getTotalPages()
+        );
     }
 
     public PlantResponseDto getPlantById(Long id) {

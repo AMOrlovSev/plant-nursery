@@ -3,12 +3,15 @@ package sev.amorlov.plant_nursery.controller;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import sev.amorlov.plant_nursery.dto.CachedPage;
 import sev.amorlov.plant_nursery.dto.PlantRequestDto;
 import sev.amorlov.plant_nursery.dto.PlantResponseDto;
 import sev.amorlov.plant_nursery.model.PlantEntity;
 import sev.amorlov.plant_nursery.service.PlantService;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 @RestController
@@ -22,17 +25,17 @@ public class PlantController {
     }
 
     @GetMapping
-    public Page<PlantResponseDto> getPlants(
+    public ResponseEntity<CachedPage<PlantResponseDto>> getPlants(
             @RequestParam(required = false) String type,
-            @RequestParam(required = false) java.math.BigDecimal minPrice,
-            @RequestParam(required = false) java.math.BigDecimal maxPrice,
+            @RequestParam(required = false) BigDecimal minPrice,
+            @RequestParam(required = false) BigDecimal maxPrice,
             @RequestParam(required = false) Boolean onlyAvailable,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
             @RequestParam(defaultValue = "id") String sortBy,
-            @RequestParam(defaultValue = "asc") String direction
+            @RequestParam(defaultValue = "ASC") String direction
     ) {
-        return plantService.getAllPlants(type, minPrice, maxPrice, onlyAvailable, page, size, sortBy, direction);
+        return ResponseEntity.ok(plantService.getAllPlants(type, minPrice, maxPrice, onlyAvailable, page, size, sortBy, direction));
     }
 
     @GetMapping("/{id}")
