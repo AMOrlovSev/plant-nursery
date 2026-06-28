@@ -3,6 +3,7 @@ package sev.amorlov.plant_nursery.service;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.Caching;
 import org.springframework.data.domain.*;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
@@ -67,7 +68,9 @@ public class PlantService {
         );
     }
 
+    @Cacheable(value = "plant", key = "#id")
     public PlantResponseDto getPlantById(Long id) {
+        log.info("Fetching plant from Database by id: {}", id);
         return plantRepository.findById(id)
                 .map(plantMapper::toResponseDto)
                 .orElseThrow(() -> {
@@ -97,7 +100,10 @@ public class PlantService {
     }
 
     @Transactional
-    @CacheEvict(value = "plants", allEntries = true)
+    @Caching(evict = {
+            @CacheEvict(value = "plants", allEntries = true),
+            @CacheEvict(value = "plant", key = "#id")
+    })
     public PlantResponseDto updatePlant(Long id, PlantRequestDto dto) {
         log.info("Request to update plant with id: {}", id);
         return plantRepository.findById(id)
@@ -118,7 +124,10 @@ public class PlantService {
     }
 
     @Transactional
-    @CacheEvict(value = "plants", allEntries = true)
+    @Caching(evict = {
+            @CacheEvict(value = "plants", allEntries = true),
+            @CacheEvict(value = "plant", key = "#id")
+    })
     public void deletePlantById(Long id) {
         log.info("Request to delete plant with id: {}", id);
         if (!plantRepository.existsById(id)) {
@@ -130,7 +139,10 @@ public class PlantService {
     }
 
     @Transactional
-    @CacheEvict(value = "plants", allEntries = true)
+    @Caching(evict = {
+            @CacheEvict(value = "plants", allEntries = true),
+            @CacheEvict(value = "plant", key = "#id")
+    })
     public PlantResponseDto sellPlant(Long id, Integer quantityToSell) {
         log.info("Request to sell {} pcs of plant with id: {}", quantityToSell, id);
         PlantEntity plant = plantRepository.findById(id)
