@@ -34,4 +34,8 @@ public class PlantEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "supplier_id")
     private SupplierEntity supplier;
+
+    @Version
+    @Column(nullable = false, columnDefinition = "bigint default 0")
+    private Long version;
 }

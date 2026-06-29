@@ -2,6 +2,7 @@ package sev.amorlov.plant_nursery.exception;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.orm.ObjectOptimisticLockingFailureException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -53,6 +54,20 @@ public class GlobalExceptionHandler {
                 status.value(),
                 "Insufficient Stock",
                 ex.getMessage()
+        );
+
+        return new ResponseEntity<>(error, status);
+    }
+
+    @ExceptionHandler(ObjectOptimisticLockingFailureException.class)
+    public ResponseEntity<ErrorResponse> handleOptimisticLockingFailure(ObjectOptimisticLockingFailureException ex) {
+        HttpStatus status = HttpStatus.CONFLICT; // статус 409
+
+        var error = new ErrorResponse(
+                LocalDateTime.now(),
+                status.value(),
+                "Conflict / Race Condition",
+                "Товар был изменен или куплен другим пользователем. Пожалуйста, обновите данные и попробуйте снова."
         );
 
         return new ResponseEntity<>(error, status);
