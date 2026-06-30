@@ -8,6 +8,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.*;
 import org.springframework.data.jpa.domain.Specification;
+import sev.amorlov.plant_nursery.dto.CachedPage;
 import sev.amorlov.plant_nursery.dto.PlantMapper;
 import sev.amorlov.plant_nursery.dto.PlantRequestDto;
 import sev.amorlov.plant_nursery.dto.PlantResponseDto;
@@ -112,14 +113,14 @@ class PlantServiceTest {
         when(plantMapper.toResponseDto(plantEntity)).thenReturn(plantResponseDto);
 
         // Act
-        Page<PlantResponseDto> resultPage = plantService.getAllPlants(
+        CachedPage<PlantResponseDto> resultPage = plantService.getAllPlants(
                 type, minPrice, maxPrice, onlyAvailable, 0, 10, "id", "asc"
         );
 
         // Assert
         assertNotNull(resultPage);
-        assertEquals(1, resultPage.getTotalElements());
-        assertEquals("Фикус", resultPage.getContent().get(0).name());
+        assertEquals(1, resultPage.totalElements());
+        assertEquals("Фикус", resultPage.content().get(0).name());
 
         verify(plantRepository, times(1)).findAll(any(Specification.class), eq(pageable));
     }
