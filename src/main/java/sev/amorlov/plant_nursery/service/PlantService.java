@@ -115,6 +115,17 @@ public class PlantService {
                     existingPlant.setPrice(dto.price());
                     existingPlant.setQuantity(dto.quantity());
 
+                    if (dto.supplierId() != null) {
+                        SupplierEntity newSupplier = supplierRepository.findById(dto.supplierId())
+                                .orElseThrow(() -> {
+                                    log.warn("Cannot update plant id {}: Supplier with id {} not found", id, dto.supplierId());
+                                    return new IllegalArgumentException("Supplier not found with id: " + dto.supplierId());
+                                });
+                        existingPlant.setSupplier(newSupplier);
+                    } else {
+                        existingPlant.setSupplier(null);
+                    }
+
                     PlantEntity updatedEntity = plantRepository.save(existingPlant);
                     log.info("Plant with id: {} successfully updated", id);
                     return plantMapper.toResponseDto(updatedEntity);
