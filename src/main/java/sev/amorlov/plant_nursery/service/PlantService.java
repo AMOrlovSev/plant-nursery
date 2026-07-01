@@ -30,6 +30,8 @@ public class PlantService {
     private final PlantMapper plantMapper;
     private final SupplierRepository supplierRepository;
 
+    private static final int CRITICAL_STOCK_THRESHOLD = 5;
+
     public PlantService(PlantRepository plantRepository, PlantMapper plantMapper, SupplierRepository supplierRepository) {
         this.plantRepository = plantRepository;
         this.plantMapper = plantMapper;
@@ -160,13 +162,32 @@ public class PlantService {
             );
         }
 
-        plant.setQuantity(plant.getQuantity() - quantityToSell);
+        int newQuantity = plant.getQuantity() - quantityToSell;
+        plant.setQuantity(newQuantity);
 
         PlantEntity updatedPlant = plantRepository.save(plant);
 
         log.info("Successfully sold {} pcs of plant id {}. Remaining quantity: {}",
                 quantityToSell, id, updatedPlant.getQuantity());
+
+        if (newQuantity <= CRITICAL_STOCK_THRESHOLD) {
+            triggerSupplierReorderAlert(updatedPlant);
+        }
+
         return plantMapper.toResponseDto(updatedPlant);
+    }
+
+    private void triggerSupplierReorderAlert(PlantEntity plant) {
+        var supplier = plant.getSupplier();
+        if (supplier != null) {
+            log.warn("🚨 [КРИТИЧЕСКИЙ ОСТАТОК] Товар '{}' (ID: {}) на исходе! Осталось всего {} шт. " +
+                            "Необходимо связаться с поставщиком: '{}' (ID: {}).",
+                    plant.getName(), plant.getId(), plant.getQuantity(),
+                    supplier.getName(), supplier.getId());
+        } else {
+            log.warn("🚨 [КРИТИЧЕСКИЙ ОСТАТОК] Товар '{}' (ID: {}) на исходе (осталось {} шт.), но за ним не закреплен ни один поставщик!",
+                    plant.getName(), plant.getId(), plant.getQuantity());
+        }
     }
 
 }
