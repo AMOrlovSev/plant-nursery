@@ -10,5 +10,6 @@
     <include file="db/changelog/changeset/003-create-suppliers-table.sql" relativeToChangelogFile="false"/>
     <include file="db/changelog/changeset/004-insert-test-suppliers.sql" relativeToChangelogFile="false"/>
     <include file="db/changelog/changeset/005-add-version-to-plants.sql" relativeToChangelogFile="false"/>
+    <include file="db/changelog/changeset/006-add-auditing-columns.sql" relativeToChangelogFile="false"/>
 
 </databaseChangeLog>

@@ -11,7 +11,7 @@ import java.util.List;
 @Table(name = "suppliers")
 @Getter
 @Setter
-public class SupplierEntity {
+public class SupplierEntity extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -25,9 +25,6 @@ public class SupplierEntity {
 
     @Column(name = "phone_number")
     private String phoneNumber;
-
-    @Column(name = "created_at", nullable = false, updatable = false)
-    private LocalDateTime createdAt = LocalDateTime.now();
 
     @OneToMany(mappedBy = "supplier", fetch = FetchType.LAZY)
     private List<PlantEntity> plants = new ArrayList<>();
