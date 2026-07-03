@@ -7,5 +7,6 @@ public record SupplierResponseDto(
         String name,
         String contactEmail,
         String phoneNumber,
-        LocalDateTime createdAt
+        LocalDateTime createdAt,
+        LocalDateTime updatedAt
 ) {}
