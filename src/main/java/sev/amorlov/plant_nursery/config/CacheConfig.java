@@ -24,42 +24,38 @@ public class CacheConfig {
 
     @Bean
     public RedisCacheManager cacheManager(RedisConnectionFactory connectionFactory) {
-        // Создаем и настраиваем ObjectMapper для поддержки дат Java 8 и Record'ов
+        // 1. Создаем строго настроенный ObjectMapper
         ObjectMapper objectMapper = new ObjectMapper();
-        objectMapper.registerModule(new JavaTimeModule()); // Фиксит ошибку с LocalDateTime
+
+        // Подключаем модуль для работы с LocalDateTime в рекордах
+        objectMapper.registerModule(new JavaTimeModule());
+
+        // Включаем полиморфизм так, чтобы метаданные сохранялись абсолютно для всех объектов (включая Final/Records)
         objectMapper.activateDefaultTyping(
                 LaissezFaireSubTypeValidator.instance,
-                ObjectMapper.DefaultTyping.NON_FINAL,
+                ObjectMapper.DefaultTyping.EVERYTHING,
                 JsonTypeInfo.As.PROPERTY
         );
 
-        // Создаем сериализатор с нашей конфигурацией
+        // Внимание здесь: передаем ObjectMapper в Generic-сериализатор
         GenericJackson2JsonRedisSerializer jackson2JsonRedisSerializer =
                 new GenericJackson2JsonRedisSerializer(objectMapper);
 
-        // Базовая конфигурация по умолчанию (дефолтный TTL = 10 минут)
+        // 2. Базовая конфигурация по умолчанию
         RedisCacheConfiguration defaultCacheConfig = RedisCacheConfiguration.defaultCacheConfig()
                 .entryTtl(Duration.ofMinutes(10))
-                // Отключаем кэширование null-значений, чтобы не забивать память
                 .disableCachingNullValues()
-                // Настраиваем сериализацию ключей в обычную строку
                 .serializeKeysWith(RedisSerializationContext.SerializationPair.fromSerializer(new StringRedisSerializer()))
-                // Настраиваем сериализацию значений в JSON через Jackson
                 .serializeValuesWith(RedisSerializationContext.SerializationPair.fromSerializer(jackson2JsonRedisSerializer));
 
-        // Индивидуальные настройки времени жизни (TTL) для разных кэшей
+        // 3. Настройки времени жизни (TTL) для разных кэшей
         Map<String, RedisCacheConfiguration> cacheConfigurations = new HashMap<>();
-
-        // Списки растений с фильтрами — живут 5 минут
         cacheConfigurations.put("plants", defaultCacheConfig.entryTtl(Duration.ofMinutes(5)));
-
-        // Конкретная карточка растения по ID — живет 1 час
         cacheConfigurations.put("plant", defaultCacheConfig.entryTtl(Duration.ofHours(1)));
 
-        // Собираем CacheManager со всеми правилами
         return RedisCacheManager.builder(connectionFactory)
-                .cacheDefaults(defaultCacheConfig) // если появится новый кэш, применится этот дефолт
-                .withInitialCacheConfigurations(cacheConfigurations) // наши кастомные TTL
+                .cacheDefaults(defaultCacheConfig)
+                .withInitialCacheConfigurations(cacheConfigurations)
                 .build();
     }
 }

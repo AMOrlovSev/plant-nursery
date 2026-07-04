@@ -3,6 +3,7 @@ package sev.amorlov.plant_nursery.model;
 import jakarta.persistence.Column;
 import jakarta.persistence.EntityListeners;
 import jakarta.persistence.MappedSuperclass;
+import jakarta.persistence.Version;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.data.annotation.CreatedDate;
@@ -24,4 +25,8 @@ public abstract class BaseEntity {
     @LastModifiedDate
     @Column(name = "updated_at", nullable = false)
     private LocalDateTime updatedAt;
+
+    @Version
+    @Column(nullable = false)
+    private Long version = 0L;
 }
