@@ -12,5 +12,6 @@
     <include file="db/changelog/changeset/005-add-version-to-plants.sql" relativeToChangelogFile="false"/>
     <include file="db/changelog/changeset/006-add-auditing-columns.sql" relativeToChangelogFile="false"/>
     <include file="db/changelog/changeset/007-add-version-to-suppliers.sql" relativeToChangelogFile="false"/>
+    <include file="db/changelog/changeset/008-create-orders-and-order-items.sql" relativeToChangelogFile="false"/>
 
 </databaseChangeLog>
