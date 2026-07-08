@@ -72,4 +72,18 @@ public class GlobalExceptionHandler {
 
         return new ResponseEntity<>(error, status);
     }
+
+    @ExceptionHandler(IllegalStateException.class)
+    public ResponseEntity<ErrorResponse> handleIllegalState(IllegalStateException ex) {
+        HttpStatus status = HttpStatus.BAD_REQUEST; // 400
+
+        var error = new ErrorResponse(
+                LocalDateTime.now(),
+                status.value(),
+                "Illegal Business State",
+                ex.getMessage()
+        );
+
+        return new ResponseEntity<>(error, status);
+    }
 }

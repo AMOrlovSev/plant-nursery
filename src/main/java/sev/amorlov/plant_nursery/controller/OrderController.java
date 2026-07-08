@@ -21,4 +21,10 @@ public class OrderController {
         OrderResponseDto response = orderService.createOrder(dto);
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
+
+    @PatchMapping("/{id}/cancel")
+    public ResponseEntity<OrderResponseDto> cancelOrder(@PathVariable Long id) {
+        OrderResponseDto response = orderService.cancelOrder(id);
+        return ResponseEntity.ok(response);
+    }
 }

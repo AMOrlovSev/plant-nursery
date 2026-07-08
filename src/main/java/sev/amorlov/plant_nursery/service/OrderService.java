@@ -65,4 +65,31 @@ public class OrderService {
         log.info("Order successfully created with ID: {}, Total Price: {}", savedOrder.getId(), savedOrder.getTotalPrice());
         return orderMapper.toResponseDto(savedOrder);
     }
+
+    @Transactional
+    @CacheEvict(value = {"plants", "plant"}, allEntries = true)
+    public OrderResponseDto cancelOrder(Long id) {
+        log.info("Request to cancel order with ID: {}", id);
+
+        OrderEntity order = orderRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Order not found with id: " + id));
+
+        if (order.getStatus() == OrderStatus.DELIVERED || order.getStatus() == OrderStatus.CANCELLED) {
+            throw new IllegalStateException("Cannot cancel an order with status: " + order.getStatus());
+        }
+
+        for (OrderItemEntity item : order.getItems()) {
+            PlantEntity plant = item.getPlant();
+            int restoredQuantity = plant.getQuantity() + item.getQuantity();
+            plant.setQuantity(restoredQuantity);
+            plantRepository.save(plant);
+            log.info("Restored {} pcs of plant '{}' (ID: {}) back to stock", item.getQuantity(), plant.getName(), plant.getId());
+        }
+
+        order.setStatus(OrderStatus.CANCELLED);
+        OrderEntity updatedOrder = orderRepository.save(order);
+
+        log.info("Order with ID: {} has been successfully CANCELLED", id);
+        return orderMapper.toResponseDto(updatedOrder);
+    }
 }
