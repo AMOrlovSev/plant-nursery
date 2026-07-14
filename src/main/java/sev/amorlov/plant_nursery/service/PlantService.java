@@ -1,5 +1,6 @@
 package sev.amorlov.plant_nursery.service;
 
+import jakarta.persistence.EntityNotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
@@ -77,7 +78,7 @@ public class PlantService {
                 .map(plantMapper::toResponseDto)
                 .orElseThrow(() -> {
                     log.warn("Plant not found with id: {}", id);
-                    return new IllegalArgumentException("Plant not found with id: " + id);
+                    return new EntityNotFoundException("Plant not found with id: " + id);
                 });
     }
 
@@ -91,7 +92,7 @@ public class PlantService {
             SupplierEntity supplier = supplierRepository.findById(dto.supplierId())
                     .orElseThrow(() -> {
                         log.warn("Failed to save plant: Supplier with id {} not found", dto.supplierId());
-                        return new IllegalArgumentException("Supplier not found with id: " + dto.supplierId());
+                        return new EntityNotFoundException("Supplier not found with id: " + dto.supplierId());
                     });
             entity.setSupplier(supplier);
         }
@@ -119,7 +120,7 @@ public class PlantService {
                         SupplierEntity newSupplier = supplierRepository.findById(dto.supplierId())
                                 .orElseThrow(() -> {
                                     log.warn("Cannot update plant id {}: Supplier with id {} not found", id, dto.supplierId());
-                                    return new IllegalArgumentException("Supplier not found with id: " + dto.supplierId());
+                                    return new EntityNotFoundException("Supplier not found with id: " + dto.supplierId());
                                 });
                         existingPlant.setSupplier(newSupplier);
                     } else {
@@ -132,7 +133,7 @@ public class PlantService {
                 })
                 .orElseThrow(() -> {
                     log.warn("Cannot update. Plant not found with id: {}", id);
-                    return new IllegalArgumentException("Cannot update. Plant not found with id: " + id);
+                    return new EntityNotFoundException("Cannot update. Plant not found with id: " + id);
                 });
     }
 
@@ -145,7 +146,7 @@ public class PlantService {
         log.info("Request to delete plant with id: {}", id);
         if (!plantRepository.existsById(id)) {
             log.warn("Cannot delete. Plant not found with id: {}", id);
-            throw new IllegalArgumentException("Cannot delete. Plant not found with id: " + id);
+            throw new EntityNotFoundException("Cannot delete. Plant not found with id: " + id);
         }
         plantRepository.deleteById(id);
         log.info("Plant with id: {} successfully deleted", id);
@@ -161,7 +162,7 @@ public class PlantService {
         PlantEntity plant = plantRepository.findById(id)
                 .orElseThrow(() -> {
                     log.warn("Plant not found with id: {}", id);
-                    return new IllegalArgumentException("Plant not found with id: " + id);
+                    return new EntityNotFoundException("Plant not found with id: " + id);
                 });
 
         if (plant.getQuantity() < quantityToSell) {

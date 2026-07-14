@@ -1,5 +1,6 @@
 package sev.amorlov.plant_nursery.service;
 
+import jakarta.persistence.EntityNotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -51,7 +52,7 @@ public class SupplierService {
         SupplierEntity supplier = supplierRepository.findById(id)
                 .orElseThrow(() -> {
                     log.warn("Failed to update supplier: id {} not found", id);
-                    return new IllegalArgumentException("Supplier not found with id: " + id);
+                    return new EntityNotFoundException("Supplier not found with id: " + id);
                 });
 
         supplierMapper.updateEntityFromDto(dto, supplier);
@@ -64,7 +65,7 @@ public class SupplierService {
         log.info("Request to delete supplier with id: {}", id);
         if (!supplierRepository.existsById(id)) {
             log.warn("Supplier not found with id: {}", id);
-            throw new IllegalArgumentException("Supplier not found with id: " + id);
+            throw new EntityNotFoundException("Supplier not found with id: " + id);
         }
         supplierRepository.deleteById(id);
         log.info("Supplier with id: {} successfully deleted from database", id);

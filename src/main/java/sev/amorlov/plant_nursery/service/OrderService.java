@@ -1,5 +1,6 @@
 package sev.amorlov.plant_nursery.service;
 
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.CacheEvict;
@@ -72,7 +73,7 @@ public class OrderService {
         log.info("Request to cancel order with ID: {}", id);
 
         OrderEntity order = orderRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Order not found with id: " + id));
+                .orElseThrow(() -> new EntityNotFoundException("Order not found with id: " + id));
 
         if (order.getStatus() == OrderStatus.DELIVERED || order.getStatus() == OrderStatus.CANCELLED) {
             throw new IllegalStateException("Cannot cancel an order with status: " + order.getStatus());
