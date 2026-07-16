@@ -4,9 +4,11 @@ import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import sev.amorlov.plant_nursery.dto.*;
+import sev.amorlov.plant_nursery.event.OrderCreatedEvent;
 import sev.amorlov.plant_nursery.exception.InsufficientStockException;
 import sev.amorlov.plant_nursery.model.*;
 import sev.amorlov.plant_nursery.repository.OrderRepository;
@@ -23,6 +25,7 @@ public class OrderService {
     private final OrderRepository orderRepository;
     private final PlantRepository plantRepository;
     private final OrderMapper orderMapper;
+    private final ApplicationEventPublisher eventPublisher;
 
     @Transactional
     @CacheEvict(value = {"plants", "plant"}, allEntries = true) // Сбрасываем кэш, так как остатки изменятся
@@ -62,6 +65,8 @@ public class OrderService {
 
         order.setTotalPrice(totalOrderPrice);
         OrderEntity savedOrder = orderRepository.save(order);
+
+        eventPublisher.publishEvent(new OrderCreatedEvent(this, savedOrder.getId(), "customer@email.com"));
 
         log.info("Order successfully created with ID: {}, Total Price: {}", savedOrder.getId(), savedOrder.getTotalPrice());
         return orderMapper.toResponseDto(savedOrder);
