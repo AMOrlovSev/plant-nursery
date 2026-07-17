@@ -15,6 +15,8 @@ import sev.amorlov.plant_nursery.repository.OrderRepository;
 import sev.amorlov.plant_nursery.repository.PlantRepository;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
+import java.util.List;
 
 @Slf4j
 @Service
@@ -97,5 +99,34 @@ public class OrderService {
 
         log.info("Order with ID: {} has been successfully CANCELLED", id);
         return orderMapper.toResponseDto(updatedOrder);
+    }
+
+    @Transactional
+    public void cancelExpiredOrders() {
+        LocalDateTime threshold = LocalDateTime.now().minusDays(1);
+
+        List<OrderEntity> expiredOrders = orderRepository.findAllByStatusAndCreatedAtBefore(
+                OrderStatus.CREATED,
+                threshold
+        );
+
+        if (expiredOrders.isEmpty()) {
+            return;
+        }
+
+        log.info("Found {} expired orders in CREATED status to cancel", expiredOrders.size());
+
+        for (OrderEntity order : expiredOrders) {
+            log.info("Canceling expired Order ID: {}", order.getId());
+
+            order.getItems().forEach(item -> {
+                PlantEntity plant = item.getPlant();
+                plant.setQuantity(plant.getQuantity() + item.getQuantity());
+                plantRepository.save(plant);
+            });
+
+            order.setStatus(OrderStatus.CANCELLED);
+            orderRepository.save(order);
+        }
     }
 }
