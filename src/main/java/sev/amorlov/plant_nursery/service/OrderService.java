@@ -41,7 +41,7 @@ public class OrderService {
         BigDecimal totalOrderPrice = BigDecimal.ZERO;
 
         for (OrderItemRequestDto itemDto : dto.items()) {
-            PlantEntity plant = plantRepository.findById(itemDto.plantId())
+            PlantEntity plant = plantRepository.findByIdForUpdate(itemDto.plantId())
                     .orElseThrow(() -> new IllegalArgumentException("Plant not found with id: " + itemDto.plantId()));
 
             if (plant.getQuantity() < itemDto.quantity()) {
@@ -68,7 +68,7 @@ public class OrderService {
         order.setTotalPrice(totalOrderPrice);
         OrderEntity savedOrder = orderRepository.save(order);
 
-        eventPublisher.publishEvent(new OrderCreatedEvent(this, savedOrder.getId(), "customer@email.com"));
+        eventPublisher.publishEvent(new OrderCreatedEvent(this, savedOrder.getId(), dto.customerEmail()));
 
         log.info("Order successfully created with ID: {}, Total Price: {}", savedOrder.getId(), savedOrder.getTotalPrice());
         return orderMapper.toResponseDto(savedOrder);
